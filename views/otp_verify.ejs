@@ -1,0 +1,21 @@
+<%- include("./partials/header") %> 
+
+<div class="row">
+    <div class="mx-auto col-sm-6 my-2">
+      <div class="card">
+        <div class="card-body">
+           <div class="card-title">Enter your OTP</div>
+           
+                <!-- Makes POST request to /verify-otp route -->
+          <form action="/verify-otp" method="POST">
+            <div class="form-group">
+              <input type="" class="form-control" name="otp">
+            </div>
+            <button type="submit" class="btn btn-dark">Verify OTP</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+</div>
+<%- include("partials/header") %>

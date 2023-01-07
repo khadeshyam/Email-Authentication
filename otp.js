@@ -8,6 +8,10 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+function generateOTP(){
+  return Math.floor(Math.random()*1000000);
+}
+
 async function sendOTP(email,otp) {
 
     try{
@@ -23,7 +27,5 @@ async function sendOTP(email,otp) {
    catch(err){
     console.log(err);
   }
-
-   
 }
-module.exports={sendOTP}
+module.exports={sendOTP,generateOTP}
