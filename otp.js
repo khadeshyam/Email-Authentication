@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 });
 
 function generateOTP(){
-  return Math.floor(Math.random()*1000000);
+  return Math.floor(100000 + Math.random() * 900000);
 }
 
 async function sendOTP(email,otp) {
@@ -20,7 +20,7 @@ async function sendOTP(email,otp) {
         to:email,
         subject:"OTP for Email Verification",
         html: `<h1 style="text-align:center">Your OTP is ${otp}</h1>
-                <p style="text-align:center">It is only valid for 10 minutes</p>`,
+                <p style="text-align:center">It is only valid for 5 minutes</p>`,
     });
      console.log(result);
    }
