@@ -12,8 +12,8 @@ const app = express();
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
 app.use(cookieParser());
+app.use(express.static("public"))
 app.set("view engine", "ejs");
 
 app.get("/",(req,res)=>{
@@ -30,21 +30,26 @@ app.post("/signup",async (req,res)=>{
     await sendOTP(email,otp);
 
     let token = jwt.sign({otp},process.env.JWT_SECRET_KEY);
-    res.cookie("jwtKey",token,{maxAge: 1000*60*5});
+    res.cookie("jwtKey",token,{maxAge: 1000*60*5,httpOnly:true});
     
     res.redirect("/verify-otp");
 });
 
 app.post("/verify-otp",(req,res)=>{
    const {jwtKey} =req.cookies;
-   const jwtBody = jwt.verify(jwtKey, process.env.JWT_SECRET_KEY);
-   const userOTP = (req.body.otp);
-   const jwtOTP = String (jwtBody.otp);
 
-   if(userOTP === jwtOTP){
-    res.send("Email Verification Successful");
+   if(jwtKey){
+    const jwtBody = jwt.verify(jwtKey, process.env.JWT_SECRET_KEY);
+    const userOTP = (req.body.otp);
+    const jwtOTP = String (jwtBody.otp);
+ 
+    if(userOTP === jwtOTP){
+     res.render("success");
+    }else{
+     res.render("failure");
+    }
    }else{
-    res.send("Wrong OTP or Email.Please Try Again");
+    res.send("Session expired")
    }
 });
 
