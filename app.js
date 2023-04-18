@@ -6,15 +6,13 @@ const bodyParser = require("body-parser");
 const jwt = require('jsonwebtoken');
 const cookieParser = require("cookie-parser");
 const {sendOTP,generateOTP} = require("./otp");
-const fs = require('fs');
-const publicKey = fs.readFileSync('./public.pem');
-const privateKey = fs.readFileSync('./private.pem');
 
 const app = express();
 
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
 app.use(cookieParser());
 app.use(express.static("public"))
 app.set("view engine", "ejs");
@@ -31,8 +29,8 @@ app.post("/signup",async (req,res)=>{
     const {email} = req.body;
     const otp = generateOTP();
     await sendOTP(email,otp);
-
-    let token = jwt.sign({ otp },privateKey, { algorithm: 'ES512' });
+    
+    let token = jwt.sign({ otp },process.env.JWT_SECRET_KEY, { algorithm: 'HS512' });
     res.cookie("jwtKey",token,{maxAge: 1000*60*5,httpOnly:true});
 
     res.redirect("/verify-otp");
@@ -42,7 +40,7 @@ app.post("/verify-otp",(req,res)=>{
    const {jwtKey} =req.cookies;
 
    if(jwtKey){
-    const jwtBody = jwt.verify(jwtKey, publicKey);
+    const jwtBody = jwt.verify(jwtKey, process.env.JWT_SECRET_KEY);
     const userOTP = (req.body.otp);
     const jwtOTP = String (jwtBody.otp);
  
